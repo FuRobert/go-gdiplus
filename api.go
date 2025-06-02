@@ -143,6 +143,8 @@ var (
 	gdipAddPathLineI     *windows.LazyProc
 	gdipClosePathFigure  *windows.LazyProc
 	gdipClosePathFigures *windows.LazyProc
+	// New
+	gdipSaveImageToStream *windows.LazyProc
 )
 
 func init() {
@@ -282,6 +284,8 @@ func init() {
 	gdipAddPathLineI = libgdiplus.NewProc("GdipAddPathLineI")
 	gdipClosePathFigure = libgdiplus.NewProc("GdipClosePathFigure")
 	gdipClosePathFigures = libgdiplus.NewProc("GdipClosePathFigures")
+	// New
+	gdipSaveImageToStream = libgdiplus.NewProc("GdipSaveImageToStream")
 }
 
 var (
@@ -1319,3 +1323,12 @@ func SavePNG(fileName string, newBMP win.HBITMAP) error {
 	return nil
 }
 */
+
+func GdipSaveImageToStream(image *GpBitmap, stream *ole.IUnknown, clsidEncoder *ole.GUID, encoderParams *EncoderParameters) GpStatus {
+	ret, _, _ := gdipSaveImageToStream.Call(
+		uintptr(unsafe.Pointer(image)),
+		uintptr(unsafe.Pointer(stream)), // stream 是 *ole.IUnknown，但其 underlying COM object 是 IStream
+		uintptr(unsafe.Pointer(clsidEncoder)),
+		uintptr(unsafe.Pointer(encoderParams)))
+	return GpStatus(ret)
+}

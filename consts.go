@@ -1,5 +1,9 @@
 package gdiplus
 
+import (
+	"github.com/go-ole/go-ole"
+)
+
 const LANG_NEUTRAL = 0x00
 
 // Status
@@ -111,8 +115,10 @@ const (
 
 /*
 #if (GDIPVER >= 0x0110)
-    SmoothingModeAntiAlias8x4 = SmoothingModeAntiAlias,
-    SmoothingModeAntiAlias8x8
+
+	SmoothingModeAntiAlias8x4 = SmoothingModeAntiAlias,
+	SmoothingModeAntiAlias8x8
+
 #endif //(GDIPVER >= 0x0110)
 */
 )
@@ -212,4 +218,17 @@ const (
 	PenTypePathGradient
 	PenTypeLinearGradient
 	PenTypeUnknown
+)
+
+var (
+	ClsidPNGEncoder = ole.GUID{Data1: 0x557CF406, Data2: 0x1A04, Data3: 0x11D3, Data4: [8]byte{0x9A, 0x73, 0x00, 0x00, 0xF8, 0x1E, 0xF3, 0x2E}}
+	ClsidJPEGEncoder = ole.GUID{Data1: 0x557CF401, Data2: 0x1A04, Data3: 0x11D3, Data4: [8]byte{0x9A, 0x73, 0x00, 0x00, 0xF8, 0x1E, 0xF3, 0x2E}}
+)
+
+var (
+	EncoderQuality = ole.GUID{Data1: 0x1D5BE4B5, Data2: 0xFA4A, Data3: 0x452D, Data4: [8]byte{0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB}}
+)
+
+const (
+	EncoderParameterValueTypeLong uint32 = 4 
 )

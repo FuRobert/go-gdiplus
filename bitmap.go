@@ -1,8 +1,11 @@
 package gdiplus
 
 import (
+	"fmt"
 	"log"
+	"os"
 	"syscall"
+	"unsafe"
 )
 
 type Bitmap struct {
@@ -47,4 +50,94 @@ func NewBitmapFromFile(fileName string) *Bitmap {
 
 func (bitmap *Bitmap) Dispose() {
 	GdipDisposeImage(bitmap.nativeImage)
+}
+
+func (bitmap *Bitmap) ToPngBytes() ([]byte, error) {
+	tempFile, err := os.CreateTemp("", "gdiplus_temp_*.png")
+	if err != nil {
+		return nil, err
+	}
+	tempFileName := tempFile.Name()
+	if err := tempFile.Close(); err != nil {
+		os.Remove(tempFileName)
+		return nil, err
+	}
+	defer os.Remove(tempFileName)
+
+	fileNameUTF16, err := syscall.UTF16PtrFromString(tempFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	status := GdipSaveImageToFile(
+		(*GpBitmap)(bitmap.nativeImage),
+		fileNameUTF16,
+		&ClsidPNGEncoder,
+		nil,
+	)
+
+	if status != Ok {
+		return nil, fmt.Errorf("%s", status.String())
+	}
+
+	data, err := os.ReadFile(tempFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+// quality 0-100。
+func (bitmap *Bitmap) ToJpegBytes(quality int) ([]byte, error) {
+	if quality < 0 || quality > 100 {
+		return nil, fmt.Errorf("JPEG quality must be between 0 and 100, got %d", quality)
+	}
+
+	tempFile, err := os.CreateTemp("", "gdiplus_temp_*.jpg")
+	if err != nil {
+		return nil, err
+	}
+	tempFileName := tempFile.Name()
+	if err := tempFile.Close(); err != nil {
+		os.Remove(tempFileName)
+		return nil, err
+	}
+	defer os.Remove(tempFileName)
+
+	fileNameUTF16, err := syscall.UTF16PtrFromString(tempFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	qualityValue := uint32(quality)
+	encoderParams := &EncoderParameters{
+		Count: 1,
+		Parameter: [1]EncoderParameter{
+			{
+				Guid:           EncoderQuality,
+				NumberOfValues: 1,
+				TypeAPI:        EncoderParameterValueTypeLong,
+				Value:          uintptr(unsafe.Pointer(&qualityValue)),
+			},
+		},
+	}
+
+	status := GdipSaveImageToFile(
+		(*GpBitmap)(bitmap.nativeImage),
+		fileNameUTF16,
+		&ClsidJPEGEncoder,
+		encoderParams,
+	)
+
+	if status != Ok {
+		return nil, fmt.Errorf("GdipSaveImageToFile save JPEG failed: %s (quality: %d)", status.String(), quality)
+	}
+
+	data, err := os.ReadFile(tempFileName)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
 }
