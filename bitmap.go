@@ -141,3 +141,63 @@ func (bitmap *Bitmap) ToJpegBytes(quality int) ([]byte, error) {
 
 	return data, nil
 }
+
+// filePath for example :"C:/images/output.png"
+func (bitmap *Bitmap) SaveAsPng(filePath string) error {
+	filePathUTF16, err := syscall.UTF16PtrFromString(filePath)
+	if err != nil {
+		return err
+	}
+
+	status := GdipSaveImageToFile(
+		(*GpBitmap)(bitmap.nativeImage),
+		filePathUTF16,
+		&ClsidPNGEncoder,
+		nil,
+	)
+
+	if status != Ok {
+		return fmt.Errorf("GdipSaveImageToFile failed to save PNG to '%s': %s", filePath, status.String())
+	}
+
+	return nil
+}
+
+// filePath for example :"C:/images/output.jpg"
+// quality 0-100。
+func (bitmap *Bitmap) SaveAsJpeg(filePath string, quality int) error {
+	if quality < 0 || quality > 100 {
+		return fmt.Errorf("JPEG quality must be between 0 and 100, got %d", quality)
+	}
+
+	filePathUTF16, err := syscall.UTF16PtrFromString(filePath)
+	if err != nil {
+		return fmt.Errorf("transform file path to UTF16 failed: %w", err)
+	}
+
+	qualityValue := uint32(quality)
+	encoderParams := &EncoderParameters{
+		Count: 1,
+		Parameter: [1]EncoderParameter{
+			{
+				Guid:           EncoderQuality,
+				NumberOfValues: 1,
+				TypeAPI:        EncoderParameterValueTypeLong,
+				Value:          uintptr(unsafe.Pointer(&qualityValue)),
+			},
+		},
+	}
+
+	status := GdipSaveImageToFile(
+		(*GpBitmap)(bitmap.nativeImage),
+		filePathUTF16,
+		&ClsidJPEGEncoder,
+		encoderParams,
+	)
+
+	if status != Ok {
+		return fmt.Errorf("GdipSaveImageToFile save JPEG failed: %s (quality: %d)", status.String(), quality)
+	}
+
+	return nil
+}
