@@ -1,5 +1,6 @@
 # About go-gdiplus
-This is a GDI+ wrapper package for the Go Programming Language. It includes the flat api and a lightweight object-oriented version around the flat api 
+This is a GDI+ wrapper package for the Go Programming Language. It includes the flat api and a lightweight object-oriented version around the flat api
+Forked from `shahfarhadreza/go-gdiplus` and added new export methods to `Bitmap` for PNG and JPEG formats
 
 ## Installation
 Simply run
