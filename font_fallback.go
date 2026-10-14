@@ -14,14 +14,14 @@ import (
 
 // GDI32 procedures for accurate OpenType cmap reading and glyph existence checking
 var (
-	libgdi32                 = windows.NewLazySystemDLL("gdi32.dll")
-	procCreateCompatibleDC   = libgdi32.NewProc("CreateCompatibleDC")
-	procDeleteDC             = libgdi32.NewProc("DeleteDC")
-	procCreateFontW          = libgdi32.NewProc("CreateFontW")
-	procSelectObject         = libgdi32.NewProc("SelectObject")
-	procDeleteObject         = libgdi32.NewProc("DeleteObject")
-	procGetFontData          = libgdi32.NewProc("GetFontData")
-	procGetGlyphIndicesW     = libgdi32.NewProc("GetGlyphIndicesW")
+	libgdi32               = windows.NewLazySystemDLL("gdi32.dll")
+	procCreateCompatibleDC = libgdi32.NewProc("CreateCompatibleDC")
+	procDeleteDC           = libgdi32.NewProc("DeleteDC")
+	procCreateFontW        = libgdi32.NewProc("CreateFontW")
+	procSelectObject       = libgdi32.NewProc("SelectObject")
+	procDeleteObject       = libgdi32.NewProc("DeleteObject")
+	procGetFontData        = libgdi32.NewProc("GetFontData")
+	procGetGlyphIndicesW   = libgdi32.NewProc("GetGlyphIndicesW")
 )
 
 const (
@@ -42,9 +42,9 @@ type fontCoverage struct {
 }
 
 var (
-	fallbackMu        sync.RWMutex
-	autoFontFallback  = true
-	defaultFallbacks  = []string{
+	fallbackMu       sync.RWMutex
+	autoFontFallback = true
+	defaultFallbacks = []string{
 		"Segoe UI Emoji",
 		"Segoe UI Symbol",
 		"Microsoft YaHei UI",
@@ -219,7 +219,6 @@ func isEmojiModifierOrJoiner(r rune) bool {
 	if r == '\u200D' || r == '\uFE0F' || r == '\uFE0E' || r == '\u20E3' {
 		return true
 	}
-	// Skin tone modifiers & variation selectors & regional indicators
 	if (r >= 0x1F3FB && r <= 0x1F3FF) || (r >= 0xE0020 && r <= 0xE007F) {
 		return true
 	}
@@ -264,9 +263,9 @@ func loadFontCmapFromGDI(familyName string) *fontCoverage {
 	}
 	defer procDeleteDC.Call(hdc)
 
-	// CreateFontW with default parameters and the face name
+	// CreateFontW with cell height 24 and the face name
 	hfont, _, _ := procCreateFontW.Call(
-		uintptr(int32(-24)), 0, 0, 0, 400, 0, 0, 0,
+		24, 0, 0, 0, 400, 0, 0, 0,
 		1, // DEFAULT_CHARSET
 		0, 0, 0, 0,
 		uintptr(unsafe.Pointer(&cov.familyUTF[0])),
@@ -310,7 +309,7 @@ func checkGlyphViaGDI(familyName string, ch uint16) bool {
 	defer procDeleteDC.Call(hdc)
 
 	hfont, _, _ := procCreateFontW.Call(
-		uintptr(int32(-24)), 0, 0, 0, 400, 0, 0, 0,
+		24, 0, 0, 0, 400, 0, 0, 0,
 		1, 0, 0, 0, 0,
 		uintptr(unsafe.Pointer(utf16Name)),
 	)
@@ -358,7 +357,6 @@ func parseOpenTypeCmap(data []byte) []unicodeRange {
 		if int(offset)+4 > len(data) {
 			continue
 		}
-		// Unicode (platform 0) or Windows Unicode BMP/UCS-4 (platform 3, encoding 1 or 10)
 		if platformID == 0 || (platformID == 3 && (encodingID == 1 || encodingID == 10)) {
 			format := binary.BigEndian.Uint16(data[offset : offset+2])
 			if format == 12 && format12Offset == 0 {
@@ -496,7 +494,6 @@ func resolveFontForRune(r rune, primaryFont *Font) *Font {
 		return primaryFont
 	}
 
-	// Build candidate list: if rune is an emoji, prioritize emoji fonts first
 	var candidates []string
 	if isLikelyEmoji(r) {
 		candidates = append(candidates, "Segoe UI Emoji", "Segoe UI Symbol")
@@ -518,7 +515,6 @@ func resolveFontForRune(r rune, primaryFont *Font) *Font {
 }
 
 // splitLineIntoRuns splits a single line (no '\n') into contiguous fontRun segments.
-// Keeps emoji sequences (such as ZWJ sequences, variation selectors, skin tones) attached to the preceding rune's font.
 func splitLineIntoRuns(line string, primaryFont *Font) []fontRun {
 	if line == "" {
 		return nil
@@ -531,7 +527,6 @@ func splitLineIntoRuns(line string, primaryFont *Font) []fontRun {
 	for i, r := range runes {
 		var targetFont *Font
 		if i > 0 && currentFont != nil && (r == ' ' || isEmojiModifierOrJoiner(r)) {
-			// Keep spaces and emoji joiners/modifiers in the current font run to avoid unnecessary fragmentation
 			targetFont = currentFont
 		} else {
 			targetFont = resolveFontForRune(r, primaryFont)
@@ -584,7 +579,6 @@ func (g *Graphics) getPrimaryLineHeight(font *Font) float32 {
 // drawStringFallbackPoint renders multi-line or single-line text at (origin.X, origin.Y) with automatic font fallback.
 func (g *Graphics) drawStringFallbackPoint(text string, font *Font, origin *PointF, brush *Brush) {
 	lineHeight := g.getPrimaryLineHeight(font)
-	// GDI+ default DrawString has a small left/top padding (~1/6 em); preserve natural origin behavior
 	lines := strings.Split(strings.ReplaceAll(text, "\r\n", "\n"), "\n")
 
 	typo := NewGenericTypographicStringFormat()
@@ -649,7 +643,6 @@ func (g *Graphics) layoutFallbackLines(text string, font *Font, maxWidth float32
 			continue
 		}
 
-		// Wrap by rune clusters so lines fit within maxWidth
 		var curLineBuilder strings.Builder
 		var curW float32
 		for _, r := range rawLine {

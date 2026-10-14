@@ -107,9 +107,7 @@ func NewLinearGradientBrushEx(point1, point2 *PointF, color1, color2 *Color, wra
 		c2 = color2.GetValue()
 	}
 	GdipCreateLineBrush(point1, point2, c1, c2, wrapMode, &lineGrad)
-	if lineGrad != nil {
-		b.nativeBrush = &lineGrad.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(lineGrad)
 	return b
 }
 
@@ -125,9 +123,7 @@ func NewLinearGradientBrushI(point1, point2 *Point, color1, color2 *Color) *Line
 		c2 = color2.GetValue()
 	}
 	GdipCreateLineBrushI(point1, point2, c1, c2, WrapModeTileFlipXY, &lineGrad)
-	if lineGrad != nil {
-		b.nativeBrush = &lineGrad.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(lineGrad)
 	return b
 }
 
@@ -144,9 +140,7 @@ func NewLinearGradientBrushFromRect(rect *RectF, color1, color2 *Color, mode Lin
 		c2 = color2.GetValue()
 	}
 	GdipCreateLineBrushFromRect(rect, c1, c2, mode, WrapModeTileFlipXY, &lineGrad)
-	if lineGrad != nil {
-		b.nativeBrush = &lineGrad.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(lineGrad)
 	return b
 }
 
@@ -162,9 +156,7 @@ func NewLinearGradientBrushFromRectI(rect *Rect, color1, color2 *Color, mode Lin
 		c2 = color2.GetValue()
 	}
 	GdipCreateLineBrushFromRectI(rect, c1, c2, mode, WrapModeTileFlipXY, &lineGrad)
-	if lineGrad != nil {
-		b.nativeBrush = &lineGrad.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(lineGrad)
 	return b
 }
 
@@ -184,9 +176,7 @@ func NewLinearGradientBrushWithAngle(rect *RectF, color1, color2 *Color, angle f
 		scalable = 1
 	}
 	GdipCreateLineBrushFromRectWithAngle(rect, c1, c2, angle, scalable, WrapModeTileFlipXY, &lineGrad)
-	if lineGrad != nil {
-		b.nativeBrush = &lineGrad.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(lineGrad)
 	return b
 }
 
@@ -271,9 +261,7 @@ func NewHatchBrush(style HatchStyle, foreColor, backColor *Color) *HatchBrush {
 		bg = backColor.GetValue()
 	}
 	GdipCreateHatchBrush(style, fg, bg, &hatch)
-	if hatch != nil {
-		b.nativeBrush = &hatch.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(hatch)
 	return b
 }
 
@@ -293,9 +281,7 @@ func NewTextureBrush(image *Image, wrapMode WrapMode) *TextureBrush {
 	}
 	var tex *GpTexture
 	GdipCreateTexture(image.nativeImage, wrapMode, &tex)
-	if tex != nil {
-		b.nativeBrush = &tex.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(tex)
 	return b
 }
 
@@ -315,9 +301,7 @@ func NewPathGradientBrush(path *GraphicsPath) *PathGradientBrush {
 	}
 	var pg *GpPathGradient
 	GdipCreatePathGradientFromPath(path.nativePath, &pg)
-	if pg != nil {
-		b.nativeBrush = &pg.GpBrush
-	}
+	b.nativeBrush = (*GpBrush)(pg)
 	return b
 }
 

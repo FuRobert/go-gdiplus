@@ -11,10 +11,10 @@ type GpGraphics struct{}
 type GpPen struct{}
 type GpBrush struct{}
 type GpSolidFill struct{ GpBrush }
-type GpLineGradient struct{ GpBrush }
-type GpHatch struct{ GpBrush }
-type GpTexture struct{ GpBrush }
-type GpPathGradient struct{ GpBrush }
+type GpLineGradient GpBrush
+type GpHatch GpBrush
+type GpTexture GpBrush
+type GpPathGradient GpBrush
 type GpStringFormat struct{}
 type GpFont struct{}
 type GpFontFamily struct{}

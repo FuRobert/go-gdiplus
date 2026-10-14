@@ -123,7 +123,7 @@ func (fc *FontCollection) Dispose() {
 }
 
 // NewFontFamily creates a FontFamily by name.
-// Supports CSS-style comma-separated fallback lists (e.g. "萝莉体 第二版, Microsoft YaHei, SimHei").
+// Supports CSS-style comma-separated fallback lists (e.g. "Segoe UI, Microsoft YaHei, Arial").
 // If none of the requested families exist on the system, it automatically falls back to system default fonts
 // so nativeFontFamily is never nil.
 func NewFontFamily(familyName string, fontCollection *FontCollection) *FontFamily {
@@ -219,8 +219,8 @@ func (fm *FontFamily) Dispose() {
 }
 
 // NewFont creates a Font with automatic family fallback and stores metadata for multi-font glyph fallback.
-// You may pass a single font name (e.g. "萝莉体 第二版") or a comma-separated font stack
-// (e.g. "萝莉体 第二版, Microsoft YaHei, Segoe UI Emoji").
+// You may pass a single font name (e.g. "Segoe UI") or a comma-separated font stack
+// (e.g. "Segoe UI, Microsoft YaHei, Segoe UI Emoji").
 func NewFont(familyName string, emSize float32, style int32, unit GpUnit, fontCollection *FontCollection) *Font {
 	candidates := parseFontFamilyList(familyName)
 	primaryName := familyName
