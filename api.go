@@ -43,6 +43,9 @@ var (
 	gdipDrawPolygon            *windows.LazyProc
 	gdipDrawPolygonI           *windows.LazyProc
 	gdipDrawPath               *windows.LazyProc
+	gdipDrawCurve              *windows.LazyProc
+	gdipDrawCurve2             *windows.LazyProc
+	gdipDrawClosedCurve        *windows.LazyProc
 	gdipDrawString             *windows.LazyProc
 	gdipDrawImage              *windows.LazyProc
 	gdipDrawImageI             *windows.LazyProc
@@ -55,8 +58,22 @@ var (
 	gdipFillPath               *windows.LazyProc
 	gdipFillEllipse            *windows.LazyProc
 	gdipFillEllipseI           *windows.LazyProc
+	gdipFillPie                *windows.LazyProc
+	gdipFillPieI               *windows.LazyProc
+	gdipFillClosedCurve        *windows.LazyProc
 	gdipMeasureString          *windows.LazyProc
 	gdipMeasureCharacterRanges *windows.LazyProc
+	gdipSaveGraphics           *windows.LazyProc
+	gdipRestoreGraphics        *windows.LazyProc
+	gdipFlush                  *windows.LazyProc
+	gdipTranslateWorldTransform *windows.LazyProc
+	gdipScaleWorldTransform     *windows.LazyProc
+	gdipRotateWorldTransform    *windows.LazyProc
+	gdipResetWorldTransform     *windows.LazyProc
+	gdipSetClipRect            *windows.LazyProc
+	gdipSetClipRectI           *windows.LazyProc
+	gdipSetClipPath            *windows.LazyProc
+	gdipResetClip              *windows.LazyProc
 	// Pen
 	gdipCreatePen1            *windows.LazyProc
 	gdipCreatePen2            *windows.LazyProc
@@ -111,9 +128,33 @@ var (
 	gdipCreateSolidFill   *windows.LazyProc
 	gdipSetSolidFillColor *windows.LazyProc
 	gdipGetSolidFillColor *windows.LazyProc
+	// LinearGradientBrush
+	gdipCreateLineBrush                  *windows.LazyProc
+	gdipCreateLineBrushI                 *windows.LazyProc
+	gdipCreateLineBrushFromRect          *windows.LazyProc
+	gdipCreateLineBrushFromRectI         *windows.LazyProc
+	gdipCreateLineBrushFromRectWithAngle *windows.LazyProc
+	gdipCreateLineBrushFromRectWithAngleI *windows.LazyProc
+	gdipSetLineColors                    *windows.LazyProc
+	gdipGetLineColors                    *windows.LazyProc
+	gdipSetLinePresetBlend               *windows.LazyProc
+	gdipSetLineLinearBlend               *windows.LazyProc
+	gdipSetLineSigmaBlend                *windows.LazyProc
+	gdipSetLineWrapMode                  *windows.LazyProc
+	gdipGetLineWrapMode                  *windows.LazyProc
+	gdipSetLineGammaCorrection           *windows.LazyProc
+	// HatchBrush / TextureBrush / PathGradientBrush
+	gdipCreateHatchBrush                      *windows.LazyProc
+	gdipCreateTexture                         *windows.LazyProc
+	gdipCreatePathGradientFromPath            *windows.LazyProc
+	gdipSetPathGradientCenterColor            *windows.LazyProc
+	gdipSetPathGradientSurroundColorsWithCount *windows.LazyProc
+	gdipSetPathGradientCenterPoint            *windows.LazyProc
 	// Image
 	gdipLoadImageFromFile       *windows.LazyProc
+	gdipLoadImageFromStream     *windows.LazyProc
 	gdipSaveImageToFile         *windows.LazyProc
+	gdipSaveImageToStream       *windows.LazyProc
 	gdipGetImageWidth           *windows.LazyProc
 	gdipGetImageHeight          *windows.LazyProc
 	gdipGetImageGraphicsContext *windows.LazyProc
@@ -121,36 +162,73 @@ var (
 	// Bitmap
 	gdipCreateBitmapFromScan0   *windows.LazyProc
 	gdipCreateBitmapFromFile    *windows.LazyProc
+	gdipCreateBitmapFromStream  *windows.LazyProc
 	gdipCreateBitmapFromHBITMAP *windows.LazyProc
 	gdipCreateHBITMAPFromBitmap *windows.LazyProc
-	// Font
-	gdipCreateFontFromDC           *windows.LazyProc
-	gdipCreateFont                 *windows.LazyProc
-	gdipDeleteFont                 *windows.LazyProc
-	gdipNewInstalledFontCollection *windows.LazyProc
-	gdipCreateFontFamilyFromName   *windows.LazyProc
-	gdipDeleteFontFamily           *windows.LazyProc
+	gdipBitmapGetPixel          *windows.LazyProc
+	gdipBitmapSetPixel          *windows.LazyProc
+	gdipBitmapLockBits          *windows.LazyProc
+	gdipBitmapUnlockBits        *windows.LazyProc
+	gdipCloneBitmapArea         *windows.LazyProc
+	gdipCloneBitmapAreaI        *windows.LazyProc
+	// Font & FontCollection
+	gdipCreateFontFromDC              *windows.LazyProc
+	gdipCreateFont                    *windows.LazyProc
+	gdipDeleteFont                    *windows.LazyProc
+	gdipNewInstalledFontCollection    *windows.LazyProc
+	gdipNewPrivateFontCollection      *windows.LazyProc
+	gdipDeletePrivateFontCollection   *windows.LazyProc
+	gdipPrivateAddFontFile            *windows.LazyProc
+	gdipPrivateAddMemoryFont          *windows.LazyProc
+	gdipGetFontCollectionFamilyCount  *windows.LazyProc
+	gdipGetFontCollectionFamilyList   *windows.LazyProc
+	gdipCreateFontFamilyFromName      *windows.LazyProc
+	gdipDeleteFontFamily              *windows.LazyProc
+	gdipGetFamilyName                 *windows.LazyProc
+	gdipGetGenericFontFamilySansSerif *windows.LazyProc
+	gdipGetGenericFontFamilySerif     *windows.LazyProc
+	gdipGetGenericFontFamilyMonospace *windows.LazyProc
+	gdipGetEmHeight                   *windows.LazyProc
+	gdipGetCellAscent                 *windows.LazyProc
+	gdipGetCellDescent                *windows.LazyProc
+	gdipGetLineSpacing                *windows.LazyProc
 	// StringFormat
 	gdipCreateStringFormat                *windows.LazyProc
 	gdipDeleteStringFormat                *windows.LazyProc
 	gdipStringFormatGetGenericTypographic *windows.LazyProc
+	gdipStringFormatGetGenericDefault     *windows.LazyProc
+	gdipCloneStringFormat                 *windows.LazyProc
+	gdipSetStringFormatAlign              *windows.LazyProc
+	gdipGetStringFormatAlign              *windows.LazyProc
+	gdipSetStringFormatLineAlign          *windows.LazyProc
+	gdipGetStringFormatLineAlign          *windows.LazyProc
+	gdipSetStringFormatFlags              *windows.LazyProc
+	gdipGetStringFormatFlags              *windows.LazyProc
+	gdipSetStringFormatTrimming           *windows.LazyProc
+	gdipGetStringFormatTrimming           *windows.LazyProc
 	// Path
-	gdipCreatePath       *windows.LazyProc
-	gdipDeletePath       *windows.LazyProc
-	gdipAddPathArc       *windows.LazyProc
-	gdipAddPathArcI      *windows.LazyProc
-	gdipAddPathLine      *windows.LazyProc
-	gdipAddPathLineI     *windows.LazyProc
-	gdipClosePathFigure  *windows.LazyProc
-	gdipClosePathFigures *windows.LazyProc
-	// New
-	gdipSaveImageToStream *windows.LazyProc
+	gdipCreatePath        *windows.LazyProc
+	gdipDeletePath        *windows.LazyProc
+	gdipResetPath         *windows.LazyProc
+	gdipStartPathFigure   *windows.LazyProc
+	gdipAddPathArc        *windows.LazyProc
+	gdipAddPathArcI       *windows.LazyProc
+	gdipAddPathLine       *windows.LazyProc
+	gdipAddPathLineI      *windows.LazyProc
+	gdipAddPathRectangle  *windows.LazyProc
+	gdipAddPathRectangleI *windows.LazyProc
+	gdipAddPathEllipse    *windows.LazyProc
+	gdipAddPathEllipseI   *windows.LazyProc
+	gdipAddPathPie        *windows.LazyProc
+	gdipAddPathPolygon    *windows.LazyProc
+	gdipAddPathBezier     *windows.LazyProc
+	gdipAddPathString     *windows.LazyProc
+	gdipClosePathFigure   *windows.LazyProc
+	gdipClosePathFigures  *windows.LazyProc
 )
 
 func init() {
-	// Library
 	libgdiplus := windows.NewLazySystemDLL("gdiplus.dll")
-	// Functions
 	gdiplusShutdown = libgdiplus.NewProc("GdiplusShutdown")
 	gdiplusStartup = libgdiplus.NewProc("GdiplusStartup")
 	// Graphics
@@ -184,6 +262,9 @@ func init() {
 	gdipDrawPolygonI = libgdiplus.NewProc("GdipDrawPolygonI")
 	gdipDrawPolygon = libgdiplus.NewProc("GdipDrawPolygon")
 	gdipDrawPath = libgdiplus.NewProc("GdipDrawPath")
+	gdipDrawCurve = libgdiplus.NewProc("GdipDrawCurve")
+	gdipDrawCurve2 = libgdiplus.NewProc("GdipDrawCurve2")
+	gdipDrawClosedCurve = libgdiplus.NewProc("GdipDrawClosedCurve")
 	gdipDrawString = libgdiplus.NewProc("GdipDrawString")
 	gdipDrawImage = libgdiplus.NewProc("GdipDrawImage")
 	gdipDrawImageI = libgdiplus.NewProc("GdipDrawImageI")
@@ -196,8 +277,22 @@ func init() {
 	gdipFillPath = libgdiplus.NewProc("GdipFillPath")
 	gdipFillEllipse = libgdiplus.NewProc("GdipFillEllipse")
 	gdipFillEllipseI = libgdiplus.NewProc("GdipFillEllipseI")
+	gdipFillPie = libgdiplus.NewProc("GdipFillPie")
+	gdipFillPieI = libgdiplus.NewProc("GdipFillPieI")
+	gdipFillClosedCurve = libgdiplus.NewProc("GdipFillClosedCurve")
 	gdipMeasureString = libgdiplus.NewProc("GdipMeasureString")
 	gdipMeasureCharacterRanges = libgdiplus.NewProc("GdipMeasureCharacterRanges")
+	gdipSaveGraphics = libgdiplus.NewProc("GdipSaveGraphics")
+	gdipRestoreGraphics = libgdiplus.NewProc("GdipRestoreGraphics")
+	gdipFlush = libgdiplus.NewProc("GdipFlush")
+	gdipTranslateWorldTransform = libgdiplus.NewProc("GdipTranslateWorldTransform")
+	gdipScaleWorldTransform = libgdiplus.NewProc("GdipScaleWorldTransform")
+	gdipRotateWorldTransform = libgdiplus.NewProc("GdipRotateWorldTransform")
+	gdipResetWorldTransform = libgdiplus.NewProc("GdipResetWorldTransform")
+	gdipSetClipRect = libgdiplus.NewProc("GdipSetClipRect")
+	gdipSetClipRectI = libgdiplus.NewProc("GdipSetClipRectI")
+	gdipSetClipPath = libgdiplus.NewProc("GdipSetClipPath")
+	gdipResetClip = libgdiplus.NewProc("GdipResetClip")
 	// Pen
 	gdipCreatePen1 = libgdiplus.NewProc("GdipCreatePen1")
 	gdipCreatePen2 = libgdiplus.NewProc("GdipCreatePen2")
@@ -252,9 +347,33 @@ func init() {
 	gdipCreateSolidFill = libgdiplus.NewProc("GdipCreateSolidFill")
 	gdipSetSolidFillColor = libgdiplus.NewProc("GdipSetSolidFillColor")
 	gdipGetSolidFillColor = libgdiplus.NewProc("GdipGetSolidFillColor")
+	// LinearGradientBrush
+	gdipCreateLineBrush = libgdiplus.NewProc("GdipCreateLineBrush")
+	gdipCreateLineBrushI = libgdiplus.NewProc("GdipCreateLineBrushI")
+	gdipCreateLineBrushFromRect = libgdiplus.NewProc("GdipCreateLineBrushFromRect")
+	gdipCreateLineBrushFromRectI = libgdiplus.NewProc("GdipCreateLineBrushFromRectI")
+	gdipCreateLineBrushFromRectWithAngle = libgdiplus.NewProc("GdipCreateLineBrushFromRectWithAngle")
+	gdipCreateLineBrushFromRectWithAngleI = libgdiplus.NewProc("GdipCreateLineBrushFromRectWithAngleI")
+	gdipSetLineColors = libgdiplus.NewProc("GdipSetLineColors")
+	gdipGetLineColors = libgdiplus.NewProc("GdipGetLineColors")
+	gdipSetLinePresetBlend = libgdiplus.NewProc("GdipSetLinePresetBlend")
+	gdipSetLineLinearBlend = libgdiplus.NewProc("GdipSetLineLinearBlend")
+	gdipSetLineSigmaBlend = libgdiplus.NewProc("GdipSetLineSigmaBlend")
+	gdipSetLineWrapMode = libgdiplus.NewProc("GdipSetLineWrapMode")
+	gdipGetLineWrapMode = libgdiplus.NewProc("GdipGetLineWrapMode")
+	gdipSetLineGammaCorrection = libgdiplus.NewProc("GdipSetLineGammaCorrection")
+	// Hatch / Texture / PathGradient
+	gdipCreateHatchBrush = libgdiplus.NewProc("GdipCreateHatchBrush")
+	gdipCreateTexture = libgdiplus.NewProc("GdipCreateTexture")
+	gdipCreatePathGradientFromPath = libgdiplus.NewProc("GdipCreatePathGradientFromPath")
+	gdipSetPathGradientCenterColor = libgdiplus.NewProc("GdipSetPathGradientCenterColor")
+	gdipSetPathGradientSurroundColorsWithCount = libgdiplus.NewProc("GdipSetPathGradientSurroundColorsWithCount")
+	gdipSetPathGradientCenterPoint = libgdiplus.NewProc("GdipSetPathGradientCenterPoint")
 	// Image
 	gdipLoadImageFromFile = libgdiplus.NewProc("GdipLoadImageFromFile")
+	gdipLoadImageFromStream = libgdiplus.NewProc("GdipLoadImageFromStream")
 	gdipSaveImageToFile = libgdiplus.NewProc("GdipSaveImageToFile")
+	gdipSaveImageToStream = libgdiplus.NewProc("GdipSaveImageToStream")
 	gdipGetImageWidth = libgdiplus.NewProc("GdipGetImageWidth")
 	gdipGetImageHeight = libgdiplus.NewProc("GdipGetImageHeight")
 	gdipGetImageGraphicsContext = libgdiplus.NewProc("GdipGetImageGraphicsContext")
@@ -262,30 +381,69 @@ func init() {
 	// Bitmap
 	gdipCreateBitmapFromScan0 = libgdiplus.NewProc("GdipCreateBitmapFromScan0")
 	gdipCreateBitmapFromFile = libgdiplus.NewProc("GdipCreateBitmapFromFile")
+	gdipCreateBitmapFromStream = libgdiplus.NewProc("GdipCreateBitmapFromStream")
 	gdipCreateBitmapFromHBITMAP = libgdiplus.NewProc("GdipCreateBitmapFromHBITMAP")
 	gdipCreateHBITMAPFromBitmap = libgdiplus.NewProc("GdipCreateHBITMAPFromBitmap")
+	gdipBitmapGetPixel = libgdiplus.NewProc("GdipBitmapGetPixel")
+	gdipBitmapSetPixel = libgdiplus.NewProc("GdipBitmapSetPixel")
+	gdipBitmapLockBits = libgdiplus.NewProc("GdipBitmapLockBits")
+	gdipBitmapUnlockBits = libgdiplus.NewProc("GdipBitmapUnlockBits")
+	gdipCloneBitmapArea = libgdiplus.NewProc("GdipCloneBitmapArea")
+	gdipCloneBitmapAreaI = libgdiplus.NewProc("GdipCloneBitmapAreaI")
 	// Font
 	gdipCreateFontFromDC = libgdiplus.NewProc("GdipCreateFontFromDC")
 	gdipCreateFont = libgdiplus.NewProc("GdipCreateFont")
 	gdipDeleteFont = libgdiplus.NewProc("GdipDeleteFont")
 	gdipNewInstalledFontCollection = libgdiplus.NewProc("GdipNewInstalledFontCollection")
+	gdipNewPrivateFontCollection = libgdiplus.NewProc("GdipNewPrivateFontCollection")
+	gdipDeletePrivateFontCollection = libgdiplus.NewProc("GdipDeletePrivateFontCollection")
+	gdipPrivateAddFontFile = libgdiplus.NewProc("GdipPrivateAddFontFile")
+	gdipPrivateAddMemoryFont = libgdiplus.NewProc("GdipPrivateAddMemoryFont")
+	gdipGetFontCollectionFamilyCount = libgdiplus.NewProc("GdipGetFontCollectionFamilyCount")
+	gdipGetFontCollectionFamilyList = libgdiplus.NewProc("GdipGetFontCollectionFamilyList")
 	gdipCreateFontFamilyFromName = libgdiplus.NewProc("GdipCreateFontFamilyFromName")
 	gdipDeleteFontFamily = libgdiplus.NewProc("GdipDeleteFontFamily")
+	gdipGetFamilyName = libgdiplus.NewProc("GdipGetFamilyName")
+	gdipGetGenericFontFamilySansSerif = libgdiplus.NewProc("GdipGetGenericFontFamilySansSerif")
+	gdipGetGenericFontFamilySerif = libgdiplus.NewProc("GdipGetGenericFontFamilySerif")
+	gdipGetGenericFontFamilyMonospace = libgdiplus.NewProc("GdipGetGenericFontFamilyMonospace")
+	gdipGetEmHeight = libgdiplus.NewProc("GdipGetEmHeight")
+	gdipGetCellAscent = libgdiplus.NewProc("GdipGetCellAscent")
+	gdipGetCellDescent = libgdiplus.NewProc("GdipGetCellDescent")
+	gdipGetLineSpacing = libgdiplus.NewProc("GdipGetLineSpacing")
 	// StringFormat
 	gdipCreateStringFormat = libgdiplus.NewProc("GdipCreateStringFormat")
 	gdipDeleteStringFormat = libgdiplus.NewProc("GdipDeleteStringFormat")
 	gdipStringFormatGetGenericTypographic = libgdiplus.NewProc("GdipStringFormatGetGenericTypographic")
+	gdipStringFormatGetGenericDefault = libgdiplus.NewProc("GdipStringFormatGetGenericDefault")
+	gdipCloneStringFormat = libgdiplus.NewProc("GdipCloneStringFormat")
+	gdipSetStringFormatAlign = libgdiplus.NewProc("GdipSetStringFormatAlign")
+	gdipGetStringFormatAlign = libgdiplus.NewProc("GdipGetStringFormatAlign")
+	gdipSetStringFormatLineAlign = libgdiplus.NewProc("GdipSetStringFormatLineAlign")
+	gdipGetStringFormatLineAlign = libgdiplus.NewProc("GdipGetStringFormatLineAlign")
+	gdipSetStringFormatFlags = libgdiplus.NewProc("GdipSetStringFormatFlags")
+	gdipGetStringFormatFlags = libgdiplus.NewProc("GdipGetStringFormatFlags")
+	gdipSetStringFormatTrimming = libgdiplus.NewProc("GdipSetStringFormatTrimming")
+	gdipGetStringFormatTrimming = libgdiplus.NewProc("GdipGetStringFormatTrimming")
 	// Path
 	gdipCreatePath = libgdiplus.NewProc("GdipCreatePath")
 	gdipDeletePath = libgdiplus.NewProc("GdipDeletePath")
+	gdipResetPath = libgdiplus.NewProc("GdipResetPath")
+	gdipStartPathFigure = libgdiplus.NewProc("GdipStartPathFigure")
 	gdipAddPathArc = libgdiplus.NewProc("GdipAddPathArc")
 	gdipAddPathArcI = libgdiplus.NewProc("GdipAddPathArcI")
 	gdipAddPathLine = libgdiplus.NewProc("GdipAddPathLine")
 	gdipAddPathLineI = libgdiplus.NewProc("GdipAddPathLineI")
+	gdipAddPathRectangle = libgdiplus.NewProc("GdipAddPathRectangle")
+	gdipAddPathRectangleI = libgdiplus.NewProc("GdipAddPathRectangleI")
+	gdipAddPathEllipse = libgdiplus.NewProc("GdipAddPathEllipse")
+	gdipAddPathEllipseI = libgdiplus.NewProc("GdipAddPathEllipseI")
+	gdipAddPathPie = libgdiplus.NewProc("GdipAddPathPie")
+	gdipAddPathPolygon = libgdiplus.NewProc("GdipAddPathPolygon")
+	gdipAddPathBezier = libgdiplus.NewProc("GdipAddPathBezier")
+	gdipAddPathString = libgdiplus.NewProc("GdipAddPathString")
 	gdipClosePathFigure = libgdiplus.NewProc("GdipClosePathFigure")
 	gdipClosePathFigures = libgdiplus.NewProc("GdipClosePathFigures")
-	// New
-	gdipSaveImageToStream = libgdiplus.NewProc("GdipSaveImageToStream")
 }
 
 var (
@@ -293,6 +451,7 @@ var (
 )
 
 func GdiplusShutdown() {
+	clearFallbackFontCache()
 	syscall.Syscall(gdiplusShutdown.Addr(), 1,
 		token,
 		0,
@@ -411,6 +570,93 @@ func GdipGraphicsClear(graphics *GpGraphics, color ARGB) GpStatus {
 	ret, _, _ := gdipGraphicsClear.Call(
 		uintptr(unsafe.Pointer(graphics)),
 		uintptr(color))
+	return GpStatus(ret)
+}
+
+func GdipSaveGraphics(graphics *GpGraphics, state *uint32) GpStatus {
+	ret, _, _ := gdipSaveGraphics.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(state)))
+	return GpStatus(ret)
+}
+
+func GdipRestoreGraphics(graphics *GpGraphics, state uint32) GpStatus {
+	ret, _, _ := gdipRestoreGraphics.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(state))
+	return GpStatus(ret)
+}
+
+func GdipFlush(graphics *GpGraphics, intention int32) GpStatus {
+	ret, _, _ := gdipFlush.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(intention))
+	return GpStatus(ret)
+}
+
+func GdipTranslateWorldTransform(graphics *GpGraphics, dx, dy float32, order GpMatrixOrder) GpStatus {
+	ret, _, _ := gdipTranslateWorldTransform.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(math.Float32bits(dx)),
+		uintptr(math.Float32bits(dy)),
+		uintptr(order))
+	return GpStatus(ret)
+}
+
+func GdipScaleWorldTransform(graphics *GpGraphics, sx, sy float32, order GpMatrixOrder) GpStatus {
+	ret, _, _ := gdipScaleWorldTransform.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(math.Float32bits(sx)),
+		uintptr(math.Float32bits(sy)),
+		uintptr(order))
+	return GpStatus(ret)
+}
+
+func GdipRotateWorldTransform(graphics *GpGraphics, angle float32, order GpMatrixOrder) GpStatus {
+	ret, _, _ := gdipRotateWorldTransform.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(math.Float32bits(angle)),
+		uintptr(order))
+	return GpStatus(ret)
+}
+
+func GdipResetWorldTransform(graphics *GpGraphics) GpStatus {
+	ret, _, _ := gdipResetWorldTransform.Call(uintptr(unsafe.Pointer(graphics)))
+	return GpStatus(ret)
+}
+
+func GdipSetClipRect(graphics *GpGraphics, x, y, width, height float32, combineMode CombineMode) GpStatus {
+	ret, _, _ := gdipSetClipRect.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)),
+		uintptr(combineMode))
+	return GpStatus(ret)
+}
+
+func GdipSetClipRectI(graphics *GpGraphics, x, y, width, height int32, combineMode CombineMode) GpStatus {
+	ret, _, _ := gdipSetClipRectI.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height),
+		uintptr(combineMode))
+	return GpStatus(ret)
+}
+
+func GdipSetClipPath(graphics *GpGraphics, path *GpPath, combineMode CombineMode) GpStatus {
+	ret, _, _ := gdipSetClipPath.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(path)),
+		uintptr(combineMode))
+	return GpStatus(ret)
+}
+
+func GdipResetClip(graphics *GpGraphics) GpStatus {
+	ret, _, _ := gdipResetClip.Call(uintptr(unsafe.Pointer(graphics)))
 	return GpStatus(ret)
 }
 
@@ -588,6 +834,34 @@ func GdipDrawPath(graphics *GpGraphics, pen *GpPen, path *GpPath) GpStatus {
 	return GpStatus(ret)
 }
 
+func GdipDrawCurve(graphics *GpGraphics, pen *GpPen, points *PointF, count int32) GpStatus {
+	ret, _, _ := gdipDrawCurve.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(pen)),
+		uintptr(unsafe.Pointer(points)),
+		uintptr(count))
+	return GpStatus(ret)
+}
+
+func GdipDrawCurve2(graphics *GpGraphics, pen *GpPen, points *PointF, count int32, tension float32) GpStatus {
+	ret, _, _ := gdipDrawCurve2.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(pen)),
+		uintptr(unsafe.Pointer(points)),
+		uintptr(count),
+		uintptr(math.Float32bits(tension)))
+	return GpStatus(ret)
+}
+
+func GdipDrawClosedCurve(graphics *GpGraphics, pen *GpPen, points *PointF, count int32) GpStatus {
+	ret, _, _ := gdipDrawClosedCurve.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(pen)),
+		uintptr(unsafe.Pointer(points)),
+		uintptr(count))
+	return GpStatus(ret)
+}
+
 func GdipDrawString(graphics *GpGraphics, text *uint16, length int32, font *GpFont, layoutRect *RectF, stringFormat *GpStringFormat, brush *GpBrush) GpStatus {
 	ret, _, _ := gdipDrawString.Call(
 		uintptr(unsafe.Pointer(graphics)),
@@ -684,6 +958,32 @@ func GdipFillEllipseI(graphics *GpGraphics, brush *GpBrush, x, y, width, height 
 	return GpStatus(ret)
 }
 
+func GdipFillPie(graphics *GpGraphics, brush *GpBrush, x, y, width, height, startAngle, sweepAngle float32) GpStatus {
+	ret, _, _ := gdipFillPie.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)),
+		uintptr(math.Float32bits(startAngle)),
+		uintptr(math.Float32bits(sweepAngle)))
+	return GpStatus(ret)
+}
+
+func GdipFillPieI(graphics *GpGraphics, brush *GpBrush, x, y, width, height int32, startAngle, sweepAngle float32) GpStatus {
+	ret, _, _ := gdipFillPieI.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height),
+		uintptr(math.Float32bits(startAngle)),
+		uintptr(math.Float32bits(sweepAngle)))
+	return GpStatus(ret)
+}
+
 func GdipFillPolygon(graphics *GpGraphics, brush *GpBrush, points *PointF, count int32, fillMode int32) GpStatus {
 	ret, _, _ := gdipFillPolygon.Call(
 		uintptr(unsafe.Pointer(graphics)),
@@ -701,6 +1001,15 @@ func GdipFillPolygonI(graphics *GpGraphics, brush *GpBrush, points *Point, count
 		uintptr(unsafe.Pointer(points)),
 		uintptr(count),
 		uintptr(fillMode))
+	return GpStatus(ret)
+}
+
+func GdipFillClosedCurve(graphics *GpGraphics, brush *GpBrush, points *PointF, count int32) GpStatus {
+	ret, _, _ := gdipFillClosedCurve.Call(
+		uintptr(unsafe.Pointer(graphics)),
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(points)),
+		uintptr(count))
 	return GpStatus(ret)
 }
 
@@ -1047,7 +1356,6 @@ func GdipGetPenCompoundArray(pen *GpPen, dash *float32, count int32) GpStatus {
 }
 
 // Brush
-
 func GdipCloneBrush(brush *GpBrush, clone **GpBrush) GpStatus {
 	ret, _, _ := gdipCloneBrush.Call(
 		uintptr(unsafe.Pointer(brush)),
@@ -1068,7 +1376,6 @@ func GdipGetBrushType(brush *GpBrush, brushType *GpBrushType) GpStatus {
 }
 
 // Solid Brush
-
 func GdipCreateSolidFill(color ARGB, brush **GpSolidFill) GpStatus {
 	ret, _, _ := gdipCreateSolidFill.Call(
 		uintptr(color),
@@ -1087,6 +1394,183 @@ func GdipGetSolidFillColor(brush *GpBrush, color *ARGB) GpStatus {
 	ret, _, _ := gdipGetSolidFillColor.Call(
 		uintptr(unsafe.Pointer(brush)),
 		uintptr(unsafe.Pointer(color)))
+	return GpStatus(ret)
+}
+
+// LinearGradientBrush
+func GdipCreateLineBrush(point1, point2 *PointF, color1, color2 ARGB, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrush.Call(
+		uintptr(unsafe.Pointer(point1)),
+		uintptr(unsafe.Pointer(point2)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipCreateLineBrushI(point1, point2 *Point, color1, color2 ARGB, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrushI.Call(
+		uintptr(unsafe.Pointer(point1)),
+		uintptr(unsafe.Pointer(point2)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipCreateLineBrushFromRect(rect *RectF, color1, color2 ARGB, mode LinearGradientMode, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrushFromRect.Call(
+		uintptr(unsafe.Pointer(rect)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(mode),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipCreateLineBrushFromRectI(rect *Rect, color1, color2 ARGB, mode LinearGradientMode, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrushFromRectI.Call(
+		uintptr(unsafe.Pointer(rect)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(mode),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipCreateLineBrushFromRectWithAngle(rect *RectF, color1, color2 ARGB, angle float32, isAngleScalable int32, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrushFromRectWithAngle.Call(
+		uintptr(unsafe.Pointer(rect)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(math.Float32bits(angle)),
+		uintptr(isAngleScalable),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipCreateLineBrushFromRectWithAngleI(rect *Rect, color1, color2 ARGB, angle float32, isAngleScalable int32, wrapMode WrapMode, lineGradient **GpLineGradient) GpStatus {
+	ret, _, _ := gdipCreateLineBrushFromRectWithAngleI.Call(
+		uintptr(unsafe.Pointer(rect)),
+		uintptr(color1),
+		uintptr(color2),
+		uintptr(math.Float32bits(angle)),
+		uintptr(isAngleScalable),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(lineGradient)))
+	return GpStatus(ret)
+}
+
+func GdipSetLineColors(brush *GpLineGradient, color1, color2 ARGB) GpStatus {
+	ret, _, _ := gdipSetLineColors.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(color1),
+		uintptr(color2))
+	return GpStatus(ret)
+}
+
+func GdipGetLineColors(brush *GpLineGradient, colors *ARGB) GpStatus {
+	ret, _, _ := gdipGetLineColors.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(colors)))
+	return GpStatus(ret)
+}
+
+func GdipSetLinePresetBlend(brush *GpLineGradient, blend *ARGB, positions *float32, count int32) GpStatus {
+	ret, _, _ := gdipSetLinePresetBlend.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(blend)),
+		uintptr(unsafe.Pointer(positions)),
+		uintptr(count))
+	return GpStatus(ret)
+}
+
+func GdipSetLineLinearBlend(brush *GpLineGradient, focus, scale float32) GpStatus {
+	ret, _, _ := gdipSetLineLinearBlend.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(math.Float32bits(focus)),
+		uintptr(math.Float32bits(scale)))
+	return GpStatus(ret)
+}
+
+func GdipSetLineSigmaBlend(brush *GpLineGradient, focus, scale float32) GpStatus {
+	ret, _, _ := gdipSetLineSigmaBlend.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(math.Float32bits(focus)),
+		uintptr(math.Float32bits(scale)))
+	return GpStatus(ret)
+}
+
+func GdipSetLineWrapMode(brush *GpLineGradient, wrapMode WrapMode) GpStatus {
+	ret, _, _ := gdipSetLineWrapMode.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(wrapMode))
+	return GpStatus(ret)
+}
+
+func GdipGetLineWrapMode(brush *GpLineGradient, wrapMode *WrapMode) GpStatus {
+	ret, _, _ := gdipGetLineWrapMode.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(wrapMode)))
+	return GpStatus(ret)
+}
+
+func GdipSetLineGammaCorrection(brush *GpLineGradient, useGammaCorrection int32) GpStatus {
+	ret, _, _ := gdipSetLineGammaCorrection.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(useGammaCorrection))
+	return GpStatus(ret)
+}
+
+// Hatch / Texture / PathGradient
+func GdipCreateHatchBrush(hatchStyle HatchStyle, forecol, backcol ARGB, brush **GpHatch) GpStatus {
+	ret, _, _ := gdipCreateHatchBrush.Call(
+		uintptr(hatchStyle),
+		uintptr(forecol),
+		uintptr(backcol),
+		uintptr(unsafe.Pointer(brush)))
+	return GpStatus(ret)
+}
+
+func GdipCreateTexture(image *GpImage, wrapMode WrapMode, texture **GpTexture) GpStatus {
+	ret, _, _ := gdipCreateTexture.Call(
+		uintptr(unsafe.Pointer(image)),
+		uintptr(wrapMode),
+		uintptr(unsafe.Pointer(texture)))
+	return GpStatus(ret)
+}
+
+func GdipCreatePathGradientFromPath(path *GpPath, polyGradient **GpPathGradient) GpStatus {
+	ret, _, _ := gdipCreatePathGradientFromPath.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(unsafe.Pointer(polyGradient)))
+	return GpStatus(ret)
+}
+
+func GdipSetPathGradientCenterColor(brush *GpPathGradient, colors ARGB) GpStatus {
+	ret, _, _ := gdipSetPathGradientCenterColor.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(colors))
+	return GpStatus(ret)
+}
+
+func GdipSetPathGradientSurroundColorsWithCount(brush *GpPathGradient, color *ARGB, count *int32) GpStatus {
+	ret, _, _ := gdipSetPathGradientSurroundColorsWithCount.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(color)),
+		uintptr(unsafe.Pointer(count)))
+	return GpStatus(ret)
+}
+
+func GdipSetPathGradientCenterPoint(brush *GpPathGradient, points *PointF) GpStatus {
+	ret, _, _ := gdipSetPathGradientCenterPoint.Call(
+		uintptr(unsafe.Pointer(brush)),
+		uintptr(unsafe.Pointer(points)))
 	return GpStatus(ret)
 }
 
@@ -1118,6 +1602,47 @@ func GdipNewInstalledFontCollection(fontCollection **GpFontCollection) GpStatus 
 	return GpStatus(ret)
 }
 
+func GdipNewPrivateFontCollection(fontCollection **GpFontCollection) GpStatus {
+	ret, _, _ := gdipNewPrivateFontCollection.Call(uintptr(unsafe.Pointer(fontCollection)))
+	return GpStatus(ret)
+}
+
+func GdipDeletePrivateFontCollection(fontCollection **GpFontCollection) GpStatus {
+	ret, _, _ := gdipDeletePrivateFontCollection.Call(uintptr(unsafe.Pointer(fontCollection)))
+	return GpStatus(ret)
+}
+
+func GdipPrivateAddFontFile(fontCollection *GpFontCollection, filename *uint16) GpStatus {
+	ret, _, _ := gdipPrivateAddFontFile.Call(
+		uintptr(unsafe.Pointer(fontCollection)),
+		uintptr(unsafe.Pointer(filename)))
+	return GpStatus(ret)
+}
+
+func GdipPrivateAddMemoryFont(fontCollection *GpFontCollection, memory unsafe.Pointer, length int32) GpStatus {
+	ret, _, _ := gdipPrivateAddMemoryFont.Call(
+		uintptr(unsafe.Pointer(fontCollection)),
+		uintptr(memory),
+		uintptr(length))
+	return GpStatus(ret)
+}
+
+func GdipGetFontCollectionFamilyCount(fontCollection *GpFontCollection, numFound *int32) GpStatus {
+	ret, _, _ := gdipGetFontCollectionFamilyCount.Call(
+		uintptr(unsafe.Pointer(fontCollection)),
+		uintptr(unsafe.Pointer(numFound)))
+	return GpStatus(ret)
+}
+
+func GdipGetFontCollectionFamilyList(fontCollection *GpFontCollection, numSought int32, gpfamilies **GpFontFamily, numFound *int32) GpStatus {
+	ret, _, _ := gdipGetFontCollectionFamilyList.Call(
+		uintptr(unsafe.Pointer(fontCollection)),
+		uintptr(numSought),
+		uintptr(unsafe.Pointer(gpfamilies)),
+		uintptr(unsafe.Pointer(numFound)))
+	return GpStatus(ret)
+}
+
 func GdipCreateFontFamilyFromName(name *uint16, fontCollection *GpFontCollection, fontFamily **GpFontFamily) GpStatus {
 	ret, _, _ := gdipCreateFontFamilyFromName.Call(
 		uintptr(unsafe.Pointer(name)),
@@ -1131,8 +1656,62 @@ func GdipDeleteFontFamily(fontFamily *GpFontFamily) GpStatus {
 	return GpStatus(ret)
 }
 
-// StringFormat
+func GdipGetFamilyName(family *GpFontFamily, name *uint16, language uint16) GpStatus {
+	ret, _, _ := gdipGetFamilyName.Call(
+		uintptr(unsafe.Pointer(family)),
+		uintptr(unsafe.Pointer(name)),
+		uintptr(language))
+	return GpStatus(ret)
+}
 
+func GdipGetGenericFontFamilySansSerif(nativeFamily **GpFontFamily) GpStatus {
+	ret, _, _ := gdipGetGenericFontFamilySansSerif.Call(uintptr(unsafe.Pointer(nativeFamily)))
+	return GpStatus(ret)
+}
+
+func GdipGetGenericFontFamilySerif(nativeFamily **GpFontFamily) GpStatus {
+	ret, _, _ := gdipGetGenericFontFamilySerif.Call(uintptr(unsafe.Pointer(nativeFamily)))
+	return GpStatus(ret)
+}
+
+func GdipGetGenericFontFamilyMonospace(nativeFamily **GpFontFamily) GpStatus {
+	ret, _, _ := gdipGetGenericFontFamilyMonospace.Call(uintptr(unsafe.Pointer(nativeFamily)))
+	return GpStatus(ret)
+}
+
+func GdipGetEmHeight(family *GpFontFamily, style int32, EmHeight *uint16) GpStatus {
+	ret, _, _ := gdipGetEmHeight.Call(
+		uintptr(unsafe.Pointer(family)),
+		uintptr(style),
+		uintptr(unsafe.Pointer(EmHeight)))
+	return GpStatus(ret)
+}
+
+func GdipGetCellAscent(family *GpFontFamily, style int32, CellAscent *uint16) GpStatus {
+	ret, _, _ := gdipGetCellAscent.Call(
+		uintptr(unsafe.Pointer(family)),
+		uintptr(style),
+		uintptr(unsafe.Pointer(CellAscent)))
+	return GpStatus(ret)
+}
+
+func GdipGetCellDescent(family *GpFontFamily, style int32, CellDescent *uint16) GpStatus {
+	ret, _, _ := gdipGetCellDescent.Call(
+		uintptr(unsafe.Pointer(family)),
+		uintptr(style),
+		uintptr(unsafe.Pointer(CellDescent)))
+	return GpStatus(ret)
+}
+
+func GdipGetLineSpacing(family *GpFontFamily, style int32, LineSpacing *uint16) GpStatus {
+	ret, _, _ := gdipGetLineSpacing.Call(
+		uintptr(unsafe.Pointer(family)),
+		uintptr(style),
+		uintptr(unsafe.Pointer(LineSpacing)))
+	return GpStatus(ret)
+}
+
+// StringFormat
 func GdipCreateStringFormat(formatAttributes int32, language uint16, format **GpStringFormat) GpStatus {
 	ret, _, _ := gdipCreateStringFormat.Call(
 		uintptr(formatAttributes),
@@ -1146,13 +1725,80 @@ func GdipStringFormatGetGenericTypographic(format **GpStringFormat) GpStatus {
 	return GpStatus(ret)
 }
 
+func GdipStringFormatGetGenericDefault(format **GpStringFormat) GpStatus {
+	ret, _, _ := gdipStringFormatGetGenericDefault.Call(uintptr(unsafe.Pointer(format)))
+	return GpStatus(ret)
+}
+
+func GdipCloneStringFormat(format *GpStringFormat, newFormat **GpStringFormat) GpStatus {
+	ret, _, _ := gdipCloneStringFormat.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(unsafe.Pointer(newFormat)))
+	return GpStatus(ret)
+}
+
 func GdipDeleteStringFormat(format *GpStringFormat) GpStatus {
 	ret, _, _ := gdipDeleteStringFormat.Call(uintptr(unsafe.Pointer(format)))
 	return GpStatus(ret)
 }
 
-// Path
+func GdipSetStringFormatAlign(format *GpStringFormat, align StringAlignment) GpStatus {
+	ret, _, _ := gdipSetStringFormatAlign.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(align))
+	return GpStatus(ret)
+}
 
+func GdipGetStringFormatAlign(format *GpStringFormat, align *StringAlignment) GpStatus {
+	ret, _, _ := gdipGetStringFormatAlign.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(unsafe.Pointer(align)))
+	return GpStatus(ret)
+}
+
+func GdipSetStringFormatLineAlign(format *GpStringFormat, align StringAlignment) GpStatus {
+	ret, _, _ := gdipSetStringFormatLineAlign.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(align))
+	return GpStatus(ret)
+}
+
+func GdipGetStringFormatLineAlign(format *GpStringFormat, align *StringAlignment) GpStatus {
+	ret, _, _ := gdipGetStringFormatLineAlign.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(unsafe.Pointer(align)))
+	return GpStatus(ret)
+}
+
+func GdipSetStringFormatFlags(format *GpStringFormat, flags int32) GpStatus {
+	ret, _, _ := gdipSetStringFormatFlags.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(flags))
+	return GpStatus(ret)
+}
+
+func GdipGetStringFormatFlags(format *GpStringFormat, flags *int32) GpStatus {
+	ret, _, _ := gdipGetStringFormatFlags.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(unsafe.Pointer(flags)))
+	return GpStatus(ret)
+}
+
+func GdipSetStringFormatTrimming(format *GpStringFormat, trimming StringTrimming) GpStatus {
+	ret, _, _ := gdipSetStringFormatTrimming.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(trimming))
+	return GpStatus(ret)
+}
+
+func GdipGetStringFormatTrimming(format *GpStringFormat, trimming *StringTrimming) GpStatus {
+	ret, _, _ := gdipGetStringFormatTrimming.Call(
+		uintptr(unsafe.Pointer(format)),
+		uintptr(unsafe.Pointer(trimming)))
+	return GpStatus(ret)
+}
+
+// Path
 func GdipCreatePath(brushMode int32, path **GpPath) GpStatus {
 	ret, _, _ := gdipCreatePath.Call(uintptr(brushMode), uintptr(unsafe.Pointer(path)))
 	return GpStatus(ret)
@@ -1160,6 +1806,16 @@ func GdipCreatePath(brushMode int32, path **GpPath) GpStatus {
 
 func GdipDeletePath(path *GpPath) GpStatus {
 	ret, _, _ := gdipDeletePath.Call(uintptr(unsafe.Pointer(path)))
+	return GpStatus(ret)
+}
+
+func GdipResetPath(path *GpPath) GpStatus {
+	ret, _, _ := gdipResetPath.Call(uintptr(unsafe.Pointer(path)))
+	return GpStatus(ret)
+}
+
+func GdipStartPathFigure(path *GpPath) GpStatus {
+	ret, _, _ := gdipStartPathFigure.Call(uintptr(unsafe.Pointer(path)))
 	return GpStatus(ret)
 }
 
@@ -1207,6 +1863,93 @@ func GdipAddPathLineI(path *GpPath, x1, y1, x2, y2 int32) GpStatus {
 	return GpStatus(ret)
 }
 
+func GdipAddPathRectangle(path *GpPath, x, y, width, height float32) GpStatus {
+	ret, _, _ := gdipAddPathRectangle.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)))
+	return GpStatus(ret)
+}
+
+func GdipAddPathRectangleI(path *GpPath, x, y, width, height int32) GpStatus {
+	ret, _, _ := gdipAddPathRectangleI.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height))
+	return GpStatus(ret)
+}
+
+func GdipAddPathEllipse(path *GpPath, x, y, width, height float32) GpStatus {
+	ret, _, _ := gdipAddPathEllipse.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)))
+	return GpStatus(ret)
+}
+
+func GdipAddPathEllipseI(path *GpPath, x, y, width, height int32) GpStatus {
+	ret, _, _ := gdipAddPathEllipseI.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height))
+	return GpStatus(ret)
+}
+
+func GdipAddPathPie(path *GpPath, x, y, width, height, startAngle, sweepAngle float32) GpStatus {
+	ret, _, _ := gdipAddPathPie.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)),
+		uintptr(math.Float32bits(startAngle)),
+		uintptr(math.Float32bits(sweepAngle)))
+	return GpStatus(ret)
+}
+
+func GdipAddPathPolygon(path *GpPath, points *PointF, count int32) GpStatus {
+	ret, _, _ := gdipAddPathPolygon.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(unsafe.Pointer(points)),
+		uintptr(count))
+	return GpStatus(ret)
+}
+
+func GdipAddPathBezier(path *GpPath, x1, y1, x2, y2, x3, y3, x4, y4 float32) GpStatus {
+	ret, _, _ := gdipAddPathBezier.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(math.Float32bits(x1)),
+		uintptr(math.Float32bits(y1)),
+		uintptr(math.Float32bits(x2)),
+		uintptr(math.Float32bits(y2)),
+		uintptr(math.Float32bits(x3)),
+		uintptr(math.Float32bits(y3)),
+		uintptr(math.Float32bits(x4)),
+		uintptr(math.Float32bits(y4)))
+	return GpStatus(ret)
+}
+
+func GdipAddPathString(path *GpPath, str *uint16, length int32, family *GpFontFamily, style int32, emSize float32, layoutRect *RectF, format *GpStringFormat) GpStatus {
+	ret, _, _ := gdipAddPathString.Call(
+		uintptr(unsafe.Pointer(path)),
+		uintptr(unsafe.Pointer(str)),
+		uintptr(length),
+		uintptr(unsafe.Pointer(family)),
+		uintptr(style),
+		uintptr(math.Float32bits(emSize)),
+		uintptr(unsafe.Pointer(layoutRect)),
+		uintptr(unsafe.Pointer(format)))
+	return GpStatus(ret)
+}
+
 func GdipClosePathFigure(path *GpPath) GpStatus {
 	ret, _, _ := gdipClosePathFigure.Call(uintptr(unsafe.Pointer(path)))
 	return GpStatus(ret)
@@ -1218,7 +1961,6 @@ func GdipClosePathFigures(path *GpPath) GpStatus {
 }
 
 // Image
-
 func GdipGetImageGraphicsContext(image *GpImage, graphics **GpGraphics) GpStatus {
 	ret, _, _ := gdipGetImageGraphicsContext.Call(
 		uintptr(unsafe.Pointer(image)),
@@ -1229,6 +1971,13 @@ func GdipGetImageGraphicsContext(image *GpImage, graphics **GpGraphics) GpStatus
 func GdipLoadImageFromFile(filename *uint16, image **GpImage) GpStatus {
 	ret, _, _ := gdipLoadImageFromFile.Call(
 		uintptr(unsafe.Pointer(filename)),
+		uintptr(unsafe.Pointer(image)))
+	return GpStatus(ret)
+}
+
+func GdipLoadImageFromStream(stream *ole.IUnknown, image **GpImage) GpStatus {
+	ret, _, _ := gdipLoadImageFromStream.Call(
+		uintptr(unsafe.Pointer(stream)),
 		uintptr(unsafe.Pointer(image)))
 	return GpStatus(ret)
 }
@@ -1257,18 +2006,22 @@ func GdipDisposeImage(image *GpImage) GpStatus {
 		uintptr(unsafe.Pointer(image)),
 		0,
 		0)
-
 	return GpStatus(ret)
 }
 
 // Bitmap
-
 func GdipCreateBitmapFromFile(filename *uint16, bitmap **GpBitmap) GpStatus {
 	ret, _, _ := syscall.Syscall(gdipCreateBitmapFromFile.Addr(), 2,
 		uintptr(unsafe.Pointer(filename)),
 		uintptr(unsafe.Pointer(bitmap)),
 		0)
+	return GpStatus(ret)
+}
 
+func GdipCreateBitmapFromStream(stream *ole.IUnknown, bitmap **GpBitmap) GpStatus {
+	ret, _, _ := gdipCreateBitmapFromStream.Call(
+		uintptr(unsafe.Pointer(stream)),
+		uintptr(unsafe.Pointer(bitmap)))
 	return GpStatus(ret)
 }
 
@@ -1277,7 +2030,6 @@ func GdipCreateBitmapFromHBITMAP(hbm HBITMAP, hpal HPALETTE, bitmap **GpBitmap) 
 		uintptr(hbm),
 		uintptr(hpal),
 		uintptr(unsafe.Pointer(bitmap)))
-
 	return GpStatus(ret)
 }
 
@@ -1286,7 +2038,6 @@ func GdipCreateHBITMAPFromBitmap(bitmap *GpBitmap, hbmReturn *HBITMAP, backgroun
 		uintptr(unsafe.Pointer(bitmap)),
 		uintptr(unsafe.Pointer(hbmReturn)),
 		uintptr(background))
-
 	return GpStatus(ret)
 }
 
@@ -1301,33 +2052,69 @@ func GdipCreateBitmapFromScan0(width, height, stride int32, format PixelFormat, 
 	return GpStatus(ret)
 }
 
-/*
-func SavePNG(fileName string, newBMP win.HBITMAP) error {
-	// HBITMAP
-	var bmp *win.GpBitmap
-	if win.GdipCreateBitmapFromHBITMAP(newBMP, 0, &bmp) != 0 {
-		return fmt.Errorf("failed to create HBITMAP")
-	}
-	defer win.GdipDisposeImage((*GpImage)(bmp))
-	clsid, err := ole.CLSIDFromString("{557CF406-1A04-11D3-9A73-0000F81EF32E}")
-	if err != nil {
-		return err
-	}
-	fname, err := syscall.UTF16PtrFromString(fileName)
-	if err != nil {
-		return err
-	}
-	if GdipSaveImageToFile(bmp, fname, clsid, nil) != 0 {
-		return fmt.Errorf("failed to call PNG encoder")
-	}
-	return nil
+func GdipBitmapGetPixel(bitmap *GpBitmap, x, y int32, color *ARGB) GpStatus {
+	ret, _, _ := gdipBitmapGetPixel.Call(
+		uintptr(unsafe.Pointer(bitmap)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(unsafe.Pointer(color)))
+	return GpStatus(ret)
 }
-*/
+
+func GdipBitmapSetPixel(bitmap *GpBitmap, x, y int32, color ARGB) GpStatus {
+	ret, _, _ := gdipBitmapSetPixel.Call(
+		uintptr(unsafe.Pointer(bitmap)),
+		uintptr(x),
+		uintptr(y),
+		uintptr(color))
+	return GpStatus(ret)
+}
+
+func GdipBitmapLockBits(bitmap *GpBitmap, rect *Rect, flags uint32, format PixelFormat, lockedBitmapData *BitmapData) GpStatus {
+	ret, _, _ := gdipBitmapLockBits.Call(
+		uintptr(unsafe.Pointer(bitmap)),
+		uintptr(unsafe.Pointer(rect)),
+		uintptr(flags),
+		uintptr(format),
+		uintptr(unsafe.Pointer(lockedBitmapData)))
+	return GpStatus(ret)
+}
+
+func GdipBitmapUnlockBits(bitmap *GpBitmap, lockedBitmapData *BitmapData) GpStatus {
+	ret, _, _ := gdipBitmapUnlockBits.Call(
+		uintptr(unsafe.Pointer(bitmap)),
+		uintptr(unsafe.Pointer(lockedBitmapData)))
+	return GpStatus(ret)
+}
+
+func GdipCloneBitmapArea(x, y, width, height float32, format PixelFormat, srcBitmap *GpBitmap, dstBitmap **GpBitmap) GpStatus {
+	ret, _, _ := gdipCloneBitmapArea.Call(
+		uintptr(math.Float32bits(x)),
+		uintptr(math.Float32bits(y)),
+		uintptr(math.Float32bits(width)),
+		uintptr(math.Float32bits(height)),
+		uintptr(format),
+		uintptr(unsafe.Pointer(srcBitmap)),
+		uintptr(unsafe.Pointer(dstBitmap)))
+	return GpStatus(ret)
+}
+
+func GdipCloneBitmapAreaI(x, y, width, height int32, format PixelFormat, srcBitmap *GpBitmap, dstBitmap **GpBitmap) GpStatus {
+	ret, _, _ := gdipCloneBitmapAreaI.Call(
+		uintptr(x),
+		uintptr(y),
+		uintptr(width),
+		uintptr(height),
+		uintptr(format),
+		uintptr(unsafe.Pointer(srcBitmap)),
+		uintptr(unsafe.Pointer(dstBitmap)))
+	return GpStatus(ret)
+}
 
 func GdipSaveImageToStream(image *GpBitmap, stream *ole.IUnknown, clsidEncoder *ole.GUID, encoderParams *EncoderParameters) GpStatus {
 	ret, _, _ := gdipSaveImageToStream.Call(
 		uintptr(unsafe.Pointer(image)),
-		uintptr(unsafe.Pointer(stream)), // stream 是 *ole.IUnknown，但其 underlying COM object 是 IStream
+		uintptr(unsafe.Pointer(stream)),
 		uintptr(unsafe.Pointer(clsidEncoder)),
 		uintptr(unsafe.Pointer(encoderParams)))
 	return GpStatus(ret)

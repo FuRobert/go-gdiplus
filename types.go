@@ -1,12 +1,20 @@
 package gdiplus
 
-import "github.com/go-ole/go-ole"
+import (
+	"unsafe"
+
+	"github.com/go-ole/go-ole"
+)
 
 type GpStatus int32
 type GpGraphics struct{}
 type GpPen struct{}
 type GpBrush struct{}
 type GpSolidFill struct{ GpBrush }
+type GpLineGradient struct{ GpBrush }
+type GpHatch struct{ GpBrush }
+type GpTexture struct{ GpBrush }
+type GpPathGradient struct{ GpBrush }
 type GpStringFormat struct{}
 type GpFont struct{}
 type GpFontFamily struct{}
@@ -46,6 +54,14 @@ type DashStyle GpDashStyle
 type PenAlignment GpPenAlignment
 type MatrixOrder GpMatrixOrder
 
+type LinearGradientMode int32
+type WrapMode int32
+type HatchStyle int32
+type StringAlignment int32
+type StringTrimming int32
+type CombineMode int32
+type GraphicsState uint32
+
 type GdiplusStartupInput struct {
 	GdiplusVersion           uint32
 	DebugEventCallback       uintptr
@@ -80,6 +96,15 @@ type Rect struct {
 type Point struct {
 	X int32
 	Y int32
+}
+
+type BitmapData struct {
+	Width       uint32
+	Height      uint32
+	Stride      int32
+	PixelFormat PixelFormat
+	Scan0       unsafe.Pointer
+	Reserved    uintptr
 }
 
 type EncoderParameter struct {
@@ -149,6 +174,14 @@ func NewRectF(x, y, width, height float32) *RectF {
 	}
 }
 
+func NewPoint(x, y int32) *Point {
+	return &Point{X: x, Y: y}
+}
+
+func NewPointF(x, y float32) *PointF {
+	return &PointF{X: x, Y: y}
+}
+
 func (rect *Rect) Left() int32 {
 	return rect.X
 }
@@ -185,70 +218,48 @@ func (s GpStatus) String() string {
 	switch s {
 	case Ok:
 		return "Ok"
-
 	case GenericError:
 		return "GenericError"
-
 	case InvalidParameter:
 		return "InvalidParameter"
-
 	case OutOfMemory:
 		return "OutOfMemory"
-
 	case ObjectBusy:
 		return "ObjectBusy"
-
 	case InsufficientBuffer:
 		return "InsufficientBuffer"
-
 	case NotImplemented:
 		return "NotImplemented"
-
 	case Win32Error:
 		return "Win32Error"
-
 	case WrongState:
 		return "WrongState"
-
 	case Aborted:
 		return "Aborted"
-
 	case FileNotFound:
 		return "FileNotFound"
-
 	case ValueOverflow:
 		return "ValueOverflow"
-
 	case AccessDenied:
 		return "AccessDenied"
-
 	case UnknownImageFormat:
 		return "UnknownImageFormat"
-
 	case FontFamilyNotFound:
 		return "FontFamilyNotFound"
-
 	case FontStyleNotFound:
 		return "FontStyleNotFound"
-
 	case NotTrueTypeFont:
 		return "NotTrueTypeFont"
-
 	case UnsupportedGdiplusVersion:
 		return "UnsupportedGdiplusVersion"
-
 	case GdiplusNotInitialized:
 		return "GdiplusNotInitialized"
-
 	case PropertyNotFound:
 		return "PropertyNotFound"
-
 	case PropertyNotSupported:
 		return "PropertyNotSupported"
-
 	case ProfileNotFound:
 		return "ProfileNotFound"
 	}
-
 	return "Unknown Status Value"
 }
